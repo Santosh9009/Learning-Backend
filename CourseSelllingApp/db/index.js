@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const { link } = require('../routes/admin');
+const jwtPassword = 'secret';
 
 // Connect to MongoDB
-mongoose.connect('your-mongodb-url');
+mongoose.connect('mongodb+srv://Santosh:Santosh%4063711@cluster0.cmycynz.mongodb.net/CourseApp');
 
 // Define schemas
 const AdminSchema = new mongoose.Schema({
@@ -33,5 +34,6 @@ const Course = mongoose.model('Course', CourseSchema);
 module.exports = {
     Admin,
     User,
-    Course
+    Course,
+    jwtPassword
 }

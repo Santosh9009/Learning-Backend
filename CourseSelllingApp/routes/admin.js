@@ -1,52 +1,58 @@
 const { Router } = require("express");
 const adminMiddleware = require("../middleware/admin");
 const router = Router();
-const { Admin, User, Course } = require('./models');
-
+const {Admin, Course,jwtPassword} = require('../db');
+const jwt= require('jsonwebtoken')
 
 // Admin Routes
-router.post('/signup', (req, res) => {
+router.post('/signup', async(req, res) => {
+    // Implement admin signup logic
     const username = req.body.username;
     const password = req.body.password;
-    try{
-        const admin = new Admin({
-            username : username,
-            password : password
-        })
-        admin.save();
-        res.status(200).send("Admin created successfully")
-    }catch{
-        res.status(500).send("Internal server error")
-    }
+
+
+    await Admin.create({
+        username: username,
+        password: password
+    }) 
+
+    res.status(200).json({ message: 'Admin created successfully' })
+
 });
 
-router.post('/courses', adminMiddleware, (req, res) => {
+router.post('/signin', (req, res) => {
+    // Implement admin signup logic
+    const username = req.body.username;
+    const password = req.body.password;
+
+    const token = jwt.sign({username: username, password: password},jwtPassword);
+
+    res.status(200).json({ token: token })
+});
+
+router.post('/courses', adminMiddleware, async(req, res) => {
+    // Implement course creation logic
     const title = req.body.title;
     const description = req.body.description;
     const price = req.body.price;
     const imageLink = req.body.imageLink;
-    try{
-        const course = new Course({
-            title : title,
-            description : description,
-            price : price,
-            imageLink : imageLink
-        })
-        course.save();
-        res.status(200).send(course._id)
-    }catch{
-        res.status(500).send("Internal server error")
-    }
 
+    const course = await Course.create({
+        title : title,
+        description : description,
+        price : price,
+        imageLink : imageLink
+    })
+
+    res.status(200).json({ message: 'Course created successfully', courseId: course._id })
 });
 
-router.get('/courses', adminMiddleware, (req, res) => {
-    try{
-        const array = Course.find({});
-        res.status(200).send(array);
-    }catch{
-        res.status(500).send("Internal server error");
-    }
+router.get('/courses', adminMiddleware, async(req, res) => {
+    // Implement fetching all courses logic
+    const list = await Course.find({});
+    res.status(200).json({
+        courses: list
+    })
 });
 
 module.exports = router;
