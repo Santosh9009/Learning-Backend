@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-const { link } = require('../routes/admin');
-const jwtPassword = 'secret';
+const jwtPassword = 'Password';
 
 // Connect to MongoDB
 mongoose.connect('mongodb+srv://Santosh:Santosh%4063711@cluster0.cmycynz.mongodb.net/CourseApp');
